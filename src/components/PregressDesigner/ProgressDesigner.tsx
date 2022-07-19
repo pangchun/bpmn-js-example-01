@@ -65,6 +65,16 @@ export default function ProgressDesigner() {
     })();
   }, []);
 
+  useEffect(() => {
+    // 设置监听器，监听选中节点变化
+    bpmnModeler?.on('selection.changed', (e: any) => {
+      console.log(
+        e.newSelection[0] ||
+          bpmnModeler.get('elementRegistry').get('Process_1'),
+      );
+    });
+  }, [bpmnModeler]);
+
   /**
    * 初始化建模工具
    */
@@ -124,7 +134,10 @@ export default function ProgressDesigner() {
       <div id="canvas" className="container" />
       <div id="properties-panel" className="properties-panel" />
       <button
-        onClick={() => {
+        onClick={async () => {
+          let result = await bpmnModeler.saveXML({ format: true });
+          const { xml } = result;
+          xmlStr = xml;
           console.log(xmlStr);
         }}
       >
